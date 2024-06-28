@@ -4,11 +4,9 @@ import logger from 'morgan';
 import './DataBase/mongoose.js';
 import indexRouter from './Routes/usersRoutes/index.js';
 import initializeMongoServer from './DataBase/mongoConfig.js';
-
 import './Passportjs/strategies.js';
 import cors from 'cors';
 import initializeTestingMongoServer from './tests/mongoConfigTesting.js';
-// initializeMongoServer()
 initializeTestingMongoServer();
 const app = express();
 app.use(logger('dev'));
