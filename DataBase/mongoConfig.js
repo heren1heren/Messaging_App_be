@@ -1,24 +1,17 @@
-import { mongoose } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import 'dotenv/config';
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import User from './models/users.js';
+import Message from './models/message.js';
+import GroupChat from './models/groupChat.js';
+const uri = process.env.mongoDB;
 
-async function initializeTestingMongoServer() {
-  const mongoServer = await MongoMemoryServer.create();
-  const mongoUri = mongoServer.getUri();
-
-  mongoose.connect(mongoUri);
-
-  mongoose.connection.on('error', (e) => {
-    if (e.message.code === 'ETIMEDOUT') {
-      console.log(e);
-      mongoose.connect(mongoUri);
-    }
-    console.log(e);
-  });
-
-  mongoose.connection.once('open', () => {
-    console.log(`MongoDB successfully connected to ${mongoUri}`);
-  });
+main().catch((err) => console.log(err));
+async function main() {
+  await mongoose.connect(uri);
 }
+const db = mongoose.connection;
+mongoose.connection.once('open', () => {
+  console.log(`MongoDB successfully connected to ${uri}`);
+});
 
-export default initializeTestingMongoServer;
+db.on('error', console.error.bind(console, 'mongo connection error'));

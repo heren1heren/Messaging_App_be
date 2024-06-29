@@ -1,13 +1,12 @@
 import express from 'express';
 import 'dotenv/config';
 import logger from 'morgan';
-import './DataBase/mongoose.js';
+import './DataBase/mongoConfig.js';
 import indexRouter from './Routes/usersRoutes/index.js';
-import initializeMongoServer from './DataBase/mongoConfig.js';
 import './Passportjs/strategies.js';
 import cors from 'cors';
 import initializeTestingMongoServer from './tests/mongoConfigTesting.js';
-initializeTestingMongoServer();
+// initializeTestingMongoServer();
 const app = express();
 app.use(logger('dev'));
 app.use(express.json());
