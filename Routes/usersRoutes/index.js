@@ -1,14 +1,11 @@
 import { Router } from 'express';
 import 'dotenv/config';
-import passport from 'passport';
 import * as controller from '../../Controllers/index.js';
 // import * as controller from '../../Controllers/index.js';
 
 const index = Router();
-const array = [];
 
-//*GET
-index.get('/', controller.indexGet);
+//* GET
 
 index.get('/users', controller.usersGet);
 
@@ -16,31 +13,30 @@ index.get('/messages', controller.messagesGet);
 
 index.get('/groupChats', controller.groupChatsGet);
 
+index.get('/groupChats/:id', controller.groupChatDetailGet);
 index.get('/users/:id', controller.userDetailGet);
-
-//*POST
+index.get('/groupChats/all', controller.groupAllGet);
+//* POST
 
 index.post('/users/', controller.userPost);
+index.post('/groupChats/', controller.groupChatPost);
 
 index.post('/messages/', controller.messagePost);
 
-index.post('/groupChats/', controller.groupChatPost);
-//*Delete
+//* DELETE
 index.delete('/messages/', controller.messageDelete);
 
 index.delete('/users/', controller.userDelete);
 
 index.delete('/groupChats/', controller.groupChatDelete);
-//*Update
+//* UPDATE
+
 index.put('/users/:id ', controller.userUpdate);
 index.put('/groupChats/:id ', controller.groupChatUpdate);
-
-//demo test
+index.put('/groupChats/all', controller.allUpdate);
+index.put('/groupChats/:id/messages', controller.groupChatMessageUpdate);
+index.put('/groupChats/all/messages', controller.allMessageUpdate);
+// demo test
 index.get('/test', (req, res) => res.json({ array }));
-
-index.post('/test', (req, res) => {
-  array.push(req.body.item);
-  res.send('success!');
-});
 
 export default index;
