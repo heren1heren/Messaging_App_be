@@ -1,10 +1,5 @@
 **Todo**:
-move routes to seperate files to make it easier to be managed
-
-//
-
-reading mongoose memory-server docs and use it instead of this one
-
+writing test
 //
 
 then -> intergrate authentication with jwt token

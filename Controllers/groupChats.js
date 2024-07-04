@@ -5,25 +5,25 @@ import jwt from 'jsonwebtoken';
 import Message from '../DataBase/models/message.js';
 import GroupChat from '../DataBase/models/groupChat.js';
 
-export const groupChatsGet = asyncHandler(async (req, res) => {
+export const get = asyncHandler(async (req, res) => {
   const groupChats = await GroupChat.find({}, { _id: 0, __v: 0 }).sort({
     date: 1,
   });
 
   res.json({ message: 'successful fetch', data: groupChats });
 });
-export const groupChatDetailGet = asyncHandler(async (req, res) => {
+export const detailGet = asyncHandler(async (req, res) => {
   const groupChat = await GroupChat.find({ id: req.body.id }, { _id: 0, _v: 0 })
     .populate('messages')
     .exec();
   res.json({ text: 'successful fetch', data: groupChat });
 });
-export const groupAllGet = asyncHandler(async (req, res) => {
-  const all = await GroupChat.find({ name: 'All' }).exec();
+// export const allGet = asyncHandler(async (req, res) => {
+//   const all = await GroupChat.find({ name: 'All' }).exec();
 
-  res.json({ text: 'successful fetch', data: all });
-});
-export const groupChatPost = [
+//   res.json({ text: 'successful fetch', data: all });
+// });
+export const post = [
   body('name')
     .isLength({ min: 3 })
     .withMessage('name needs to have more than 3 letters')
@@ -56,7 +56,7 @@ export const groupChatPost = [
   }),
 ];
 
-export const groupChatUpdate = [
+export const put = [
   body('name')
     .isLength({ min: 3 })
     .withMessage('name cannot be less than 3 character')
@@ -86,7 +86,7 @@ export const groupChatUpdate = [
     });
   }),
 ];
-export const groupChatMessageUpdate = [
+export const messagePut = [
   body('message').escape(),
   // call this route  when user upload a text inside a group chat
   asyncHandler(async (req, res) => {
@@ -107,47 +107,17 @@ export const groupChatMessageUpdate = [
     });
   }),
 ];
-export const allUpdate = [
-  // call this route everytime a user is successfully sign up
-  asyncHandler(async (req, res, next) => {
-    const all = await GroupChat.find({ name: 'all' });
-    const users = User.find().exec();
-    const membersId = [];
-    users.forEach((user) => {
-      membersId.push(user._id);
-    });
-    all.members = membersId;
-    await all.save();
 
-    res.json({
-      message: ' updated All',
-    });
-  }),
-];
-export const allMessageUpdate = [
-  body('message').escape(),
-  // call this route everytime a user is successfully sign up
-  asyncHandler(async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.json({
-        errors,
-        ErrorMessage: 'validating error',
-      });
-    }
-    const all = await GroupChat.find({ name: 'all' });
-
-    all.messages.push(req.body.messageId);
-    await all.save();
-
-    res.json({
-      message: ' storing message sent by user ',
-    });
-  }),
-];
-export const groupChatDelete = asyncHandler(async (req, res) => {
+export const del = asyncHandler(async (req, res) => {
   await GroupChat.deleteOne({ id: req.body.id });
   res.json({
     message: `successful delete the groupChat  with id: ${req.body.id}`,
+  });
+});
+// for testing purpose
+export const delAll = asyncHandler(async (req, res) => {
+  await GroupChat.deleteMany();
+  res.json({
+    message: 'successful delete group chats',
   });
 });

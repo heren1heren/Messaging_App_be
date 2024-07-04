@@ -1,8 +1,5 @@
 import { mongoose } from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import Message from '../DataBase/models/message.js';
-import GroupChat from '../DataBase/models/groupChat.js';
-import User from '../DataBase/models/users.js';
 
 async function initializeTestingMongoServer() {
   const mongoServer = await MongoMemoryServer.create();
@@ -15,7 +12,6 @@ async function initializeTestingMongoServer() {
       console.log(e);
       mongoose.connect(mongoUri);
     }
-    console.log(e);
   });
 
   mongoose.connection.once('open', () => {

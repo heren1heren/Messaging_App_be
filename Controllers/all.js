@@ -4,8 +4,16 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import Message from '../DataBase/models/message.js';
 import GroupChat from '../DataBase/models/groupChat.js';
+import User from '../DataBase/models/users.js';
 
-export const allUpdate = [
+export const get = asyncHandler(async (req, res) => {
+  const all = await GroupChat.find({ name: 'All' }).exec();
+
+  res.json({ text: 'successful fetch', data: all });
+});
+
+export const post = [];
+export const put = [
   // call this route everytime a user is successfully sign up
   asyncHandler(async (req, res, next) => {
     const all = await GroupChat.find({ name: 'all' });
@@ -22,10 +30,10 @@ export const allUpdate = [
     });
   }),
 ];
-export const allMessageUpdate = [
+export const messagePut = [
   body('message').escape(),
   // call this route everytime a user is successfully sign up
-  asyncHandler(async (req, res, next) => {
+  asyncHandler(async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.json({
@@ -43,3 +51,11 @@ export const allMessageUpdate = [
     });
   }),
 ];
+
+export const del = asyncHandler(async (req, res) => {
+  await GroupChat.deleteOne({ name: 'all' });
+
+  res.json({
+    message: 'successful delete all group',
+  });
+});
