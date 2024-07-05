@@ -32,10 +32,5 @@ how to let user send message as an image?
 -> serve static images
 -> storing images' link inside message instance
 **Problems**:
-
-step by step to set up test environment for mongoose query routes testing
-
-- or I just need to use another database from mongodb for testing specifically
-- connect to a mock mongoose database so that it will reset after every test
-- connecting collections (models) to the mock database
-- testing routes with mongoose query inside
+check if req.body is went through if not -> fix it
+need to have a json paser

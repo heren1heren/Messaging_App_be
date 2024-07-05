@@ -7,6 +7,8 @@ import 'dotenv/config';
 import allRouter from '../Routes/usersRoutes/all';
 
 const app = express();
+app.use(express.urlencoded({ extended: false }));
+app.use('/all', allRouter);
 beforeEach(async () => {
   await mongoose.connect(process.env.testMongoDB);
 });
@@ -20,8 +22,6 @@ afterEach(async () => {
   }
 });
 
-app.use(express.urlencoded({ extended: false }));
-app.use('/all', allRouter);
 test.skip('all message update works', (done) => {
   request(app).put('/users/');
 });

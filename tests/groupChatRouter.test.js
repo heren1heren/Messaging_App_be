@@ -7,6 +7,9 @@ import 'dotenv/config';
 import groupChatRouter from '../Routes/usersRoutes/groupChats';
 
 const app = express();
+app.use(express.urlencoded({ extended: false }));
+
+app.use('/groupChats', groupChatRouter);
 beforeEach(async () => {
   await mongoose.connect(process.env.testMongoDB);
 });
@@ -20,9 +23,6 @@ afterEach(async () => {
   }
 });
 
-app.use(express.urlencoded({ extended: false }));
-
-app.use('/groupChats', groupChatRouter);
 test.skip('group chats get works', (done) => {
   request(app)
     .get('/groupChats')

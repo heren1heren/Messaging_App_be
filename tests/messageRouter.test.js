@@ -8,13 +8,12 @@ import messageRouter from '../Routes/usersRoutes/messages';
 import initializeTestingMongoServer from './mongoConfigTesting';
 
 const app = express();
-initializeTestingMongoServer();
-beforeEach(async () => {});
-afterEach(async () => {});
-
 app.use(express.urlencoded({ extended: false }));
 
 app.use('/messages', messageRouter);
+initializeTestingMongoServer();
+beforeEach(async () => {});
+afterEach(async () => {});
 
 test.skip(' messages get works', (done) => {
   request(app)

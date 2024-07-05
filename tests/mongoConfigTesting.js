@@ -13,10 +13,6 @@ async function initializeTestingMongoServer() {
       mongoose.connect(mongoUri);
     }
   });
-
-  mongoose.connection.once('open', () => {
-    console.log(`MongoDB successfully connected to ${mongoUri}`);
-  });
 }
 
 export default initializeTestingMongoServer;

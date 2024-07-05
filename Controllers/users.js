@@ -19,12 +19,10 @@ export const get = asyncHandler(async (req, res) => {
   res.json({ message: 'successful fetch', data: users });
 });
 export const userDetailGet = asyncHandler(async (req, res) => {
-  const user = await User.find(
-    { id: req.body.id },
+  const user = await User.findOne(
+    { id: req.params.id },
     { _id: 0, password: 0, __v: 0 }
-  )
-    .populate('messages')
-    .exec();
+  ).exec();
   res.json({ message: 'successful fetch', data: user });
 });
 
@@ -129,10 +127,10 @@ export const messagePut = [
 ];
 
 export const del = asyncHandler(async (req, res) => {
-  await User.deleteOne({ id: req.body.id });
+  await User.deleteOne({ id: req.params.id });
 
   res.json({
-    message: `successful delete the user with id: ${req.body.id}`,
+    message: `successful delete the user with id: ${req.params.id}`,
   });
 });
 
