@@ -5,21 +5,18 @@ import mongoose from 'mongoose';
 
 import 'dotenv/config';
 import allRouter from '../Routes/usersRoutes/all';
+import initializeTestingMongoServer from './mongoConfigTesting';
 
 const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use('/all', allRouter);
-beforeEach(async () => {
-  await mongoose.connect(process.env.testMongoDB);
-});
+initializeTestingMongoServer();
+beforeEach(async () => {});
 afterEach(async () => {
-  try {
-    request(app).delete('/messages/all');
-    request(app).delete('/groupChats/all');
-    request(app).delete('/groupChats/all');
-  } finally {
-    await mongoose.connection.close();
-  }
+  await mongoose.connection.dropDatabase();
+  const collections = await mongoose.connection.db.collections();
+
+  await Promise.all(collections.map(async (col) => col.deleteMany({})));
 });
 
 test.skip('all message update works', (done) => {

@@ -11,7 +11,4 @@ allRouter.post('/', controller.post);
 allRouter.put('/', controller.put);
 allRouter.put('/messages', controller.messagePut);
 
-// for testing option
-allRouter.delete('/', controller.del);
-
 export default allRouter;

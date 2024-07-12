@@ -32,5 +32,5 @@ how to let user send message as an image?
 -> serve static images
 -> storing images' link inside message instance
 **Problems**:
-check if req.body is went through if not -> fix it
-need to have a json paser
+
+data doesn't drop after test post

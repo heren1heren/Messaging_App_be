@@ -8,9 +8,9 @@ userRouter.get('/', controller.get);
 userRouter.get('/:id', controller.userDetailGet);
 userRouter.post('/', controller.post);
 
-userRouter.put('/', controller.put);
+userRouter.put('/:id', controller.put);
 
-userRouter.put('/messages', controller.messagePut);
+userRouter.put('/:id/messages', controller.messagePut);
 
 userRouter.delete('/:id', controller.del);
 // for testing option

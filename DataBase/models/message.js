@@ -3,7 +3,7 @@ import mongoose, { Schema, SchemaType } from 'mongoose';
 const MessageSchema = new Schema({
   id: { type: String, required: true },
   text: { type: String, required: true },
-  user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  sender: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   date: { type: Schema.Types.Date, required: true },
   imageLinks: [{ type: String }],
   receiver: {

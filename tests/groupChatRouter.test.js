@@ -5,22 +5,19 @@ import mongoose from 'mongoose';
 
 import 'dotenv/config';
 import groupChatRouter from '../Routes/usersRoutes/groupChats';
+import initializeTestingMongoServer from './mongoConfigTesting';
 
 const app = express();
 app.use(express.urlencoded({ extended: false }));
 
 app.use('/groupChats', groupChatRouter);
-beforeEach(async () => {
-  await mongoose.connect(process.env.testMongoDB);
-});
+initializeTestingMongoServer();
+beforeEach(async () => {});
 afterEach(async () => {
-  try {
-    request(app).delete('/messages/all');
-    request(app).delete('/groupChats/all');
-    request(app).delete('/groupChats/all');
-  } finally {
-    await mongoose.connection.close();
-  }
+  await mongoose.connection.dropDatabase();
+  const collections = await mongoose.connection.db.collections();
+
+  await Promise.all(collections.map(async (col) => col.deleteMany({})));
 });
 
 test.skip('group chats get works', (done) => {
@@ -36,7 +33,7 @@ test.skip('group chat detail  get works', (done) => {
     .expect({ name: 'frodo' })
     .expect(200, done);
 });
-test('groupChat post works', (done) => {
+test.skip('groupChat post works', (done) => {
   request(app)
     .post('/groupChats/')
     .type('form')

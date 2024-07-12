@@ -9,12 +9,9 @@ groupChatRouter.get('/', controller.get);
 
 groupChatRouter.post('/', controller.post);
 
-groupChatRouter.put('/', controller.put);
-groupChatRouter.put('/messages', controller.messagePut);
+groupChatRouter.put('/:id', controller.put);
+groupChatRouter.put('/:id/messages', controller.messagePut);
 
-groupChatRouter.delete('/', controller.del);
-
-// for testing option
-groupChatRouter.delete('/all', controller.delAll);
+groupChatRouter.delete('/:id', controller.del);
 
 export default groupChatRouter;

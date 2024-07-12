@@ -7,29 +7,40 @@ import 'dotenv/config';
 import userRouter from '../Routes/usersRoutes/users';
 import initializeTestingMongoServer from './mongoConfigTesting';
 import User from '../DataBase/models/users';
+import Message from '../DataBase/models/message';
 
 const app = express();
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use('/users', userRouter);
 initializeTestingMongoServer();
 beforeEach(async () => {
   await User.create({
     username: 'klein',
-    password: 'aoetuuu',
+    password: 'aoetuuueee',
     id: '1',
     date: new Date(),
+    incomeMessages: [],
   });
   await User.create({
     username: 'noPurpose',
-    password: 'aoet',
-    id: 'oaesoaeshtu',
+    password: 'aoeteeee',
+    id: '2',
     date: new Date(),
+    incomeMessages: [],
   });
 });
 afterEach(async () => {
   await mongoose.connection.dropDatabase();
+
+  const collections = await mongoose.connection.db.collections();
+
+  await Promise.all(
+    collections.map(async (collection) => {
+      await collection.deleteMany({}); // map collection to collection.deleteMany Calls
+    })
+  );
 });
 test('get users works', (done) => {
   request(app)
@@ -60,38 +71,104 @@ test('user detail get works', (done) => {
     .end(done);
 });
 
-// don't know how to test these
 test('user post works', (done) => {
   request(app)
     .post('/users/')
     .type('form')
-
-    .field('username', 'noname')
-    .field('password', 'eeeeeeee')
-    .expect((res) => {
-      // {"errors":{"errors":[{"type":"field","msg":"username needs to have more than 3 letters","path":"username","location":"body"},{"type":"field","msg":"password needs to have more than 7 letters","path":"password","location":"body"}]},"ErrorMessage":"validation errors"}
-      console.log(res);
-
-      expect(res.body.message).toBe('successfully created an user');
+    .send({
+      username: 'hereneee',
+      password: 'helloeee',
     })
-    .end(done);
+
+    .then(() => {
+      request(app)
+        .get('/users/')
+        .expect((res) => {
+          expect(res.body.data).toHaveLength(3);
+        })
+        .end(done);
+    });
 });
 
-test.skip('user update works', (done) => {
-  request(app).put('/users/');
+test('user update works', (done) => {
+  const payload = { displayName: 'cookieTurtle', username: 'herenklein' };
+  const id = 1;
+  request(app)
+    .put(`/users/${id}`)
+    .type('form')
+    .send(payload)
+    .expect((res) => {
+      expect(res.body.message).toBe(
+        `successfully updated the user with id: ${id}`
+      );
+    })
+    .then(() => {
+      request(app)
+        .get('/users/1')
+        .expect((res) => {
+          expect(res.body.data.displayName).toBe('cookieTurtle');
+        })
+        .end(done);
+    });
 });
-test.skip('user message update works', (done) => {});
+test.skip('user message update works', (done) => {
+  // todo : comeback after testing message post
+  /**
+   * first create a message with a messageId
+   *
+   * -> find object Id by request().get
+   * ->
+   * -> then (() => {
+   * pass object Id
+   * request put(/users/1/messages)
+   * })
+   */
+  const id = 123;
+  const payload = { message: 'first message', messageId: id };
+  request(app)
+    .post('/messages/')
+    .type('form')
+    .send(payload)
+    .then(() => {
+      request(app)
+        .get(`/messages/${id}`)
+        .expect((res) => {
+          console.log(res.text);
+        })
+        .end(done);
+    });
+  // request(app)
+  //   .put('/users/1/messages')
+  //   .type('form')
+  //   .send(payload)
+  //   .expect((res) => {
+  //     console.log(res.text);
+  //     expect(res.body.message).toBe(
+  //       `successfully updated the user with id: ${id}`
+  //     );
+  //   })
+  //   .then(() => {
+  //     request(app)
+  //       .get('/users/1')
+  //       .expect((res) => {
+  //         if (res.text) console.log(res.text);
+  //         expect(res.body.data.incomeMessage).toHaveLength(1);
+  //       })
+  //       .end(done);
+  //   });
+});
 
 test('user delete works', (done) => {
   request(app)
-    .delete('/users/1')
+    .delete('/users/2')
     .expect(200)
     .then(() => {
       request(app)
         .get('/users/')
         .expect(200)
         .expect((res) => {
-          expect(res.body.data).toHaveLength(1);
+          // post element in the above test did not get deleted according to  the afterEach() call
+          expect(res.body.data).toHaveLength(1); // receive: 2
         })
         .end(done);
     });

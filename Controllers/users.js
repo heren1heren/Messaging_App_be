@@ -79,8 +79,8 @@ export const put = [
       });
     }
 
-    const duplicatedUser = await User.find({ username: req.body.username });
-    const secondDuplicatedUser = await User.find({
+    const duplicatedUser = await User.findOne({ username: req.body.username });
+    const secondDuplicatedUser = await User.findOne({
       displayName: req.body.displayName,
     });
     if (duplicatedUser) {
@@ -94,13 +94,13 @@ export const put = [
       });
     }
     // success
-    const existedUser = User.find({ id: req.body.id });
+    const existedUser = await User.findOne({ id: req.params.id });
 
     if (req.body.displayName) existedUser.displayName = req.body.displayName;
     if (req.body.username) existedUser.username = req.body.username;
     await existedUser.save();
     res.json({
-      message: `successfully updated the user with id ${req.body.id}`,
+      message: `successfully updated the user with id: ${req.params.id}`,
     });
   }),
 ];
@@ -115,9 +115,10 @@ export const messagePut = [
         ErrorMessage: 'validating error',
       });
     }
-    const user = await User.find({ id: req.body.id });
-
-    user.messages.push(req.body.messageId);
+    const user = await User.findOne({ id: req.body.id });
+    // get objectId through req.body then push it
+    console.log(user.incomeMessages);
+    user.incomeMessages.push(req.body.messageId);
     await user.save();
 
     res.json({
