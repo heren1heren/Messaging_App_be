@@ -73,7 +73,7 @@ test('user detail get works', (done) => {
 
 test('user post works', (done) => {
   request(app)
-    .post('/users/')
+    .post('/users/123')
     .type('form')
     .send({
       username: 'hereneee',

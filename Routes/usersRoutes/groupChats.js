@@ -6,8 +6,8 @@ import * as controller from '../../Controllers/groupChats.js';
 const groupChatRouter = Router();
 
 groupChatRouter.get('/', controller.get);
-
-groupChatRouter.post('/', controller.post);
+groupChatRouter.get('/:id', controller.detailGet);
+groupChatRouter.post('/:id', controller.post);
 
 groupChatRouter.put('/:id', controller.put);
 groupChatRouter.put('/:id/messages', controller.messagePut);

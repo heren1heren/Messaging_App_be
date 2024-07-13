@@ -29,7 +29,7 @@ export const postUserMessage = [
       sender: user1._id,
       receiver: user2._id,
       date: new Date(),
-      id: '1',
+      id: req.params.id,
     });
 
     res.json({

@@ -5,12 +5,12 @@ import jwt from 'jsonwebtoken';
 import Message from '../DataBase/models/message.js';
 import GroupChat from '../DataBase/models/groupChat.js';
 import User from '../DataBase/models/users.js';
+import inputValidation from '../utils/inputValidation.js';
 
 export const get = asyncHandler(async (req, res) => {
   const users = await User.find(
     {},
     {
-      _id: 0,
       password: 0,
       __v: 0,
     }
@@ -21,19 +21,13 @@ export const get = asyncHandler(async (req, res) => {
 export const userDetailGet = asyncHandler(async (req, res) => {
   const user = await User.findOne(
     { id: req.params.id },
-    { _id: 0, password: 0, __v: 0 }
+    { password: 0, __v: 0 }
   ).exec();
   res.json({ message: 'successful fetch', data: user });
 });
 
 export const post = [
-  body('username')
-    .isLength({ min: 3 })
-    .withMessage('username needs to have more than 3 letters')
-    .escape(),
-  body('password')
-    .isLength({ min: 7 })
-    .withMessage('password needs to have more than 7 letters'),
+  inputValidation,
 
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
@@ -54,7 +48,7 @@ export const post = [
         username: req.body.username,
         password: hash,
         date: new Date(),
-        id: 'eeee',
+        id: req.params.id,
       });
     });
     // success
@@ -62,14 +56,7 @@ export const post = [
   }),
 ];
 export const put = [
-  body('username')
-    .isLength({ min: 3 })
-    .withMessage('name cannot be less than 3 character')
-    .escape(),
-  body('displayName')
-    .isLength({ min: 3 })
-    .withMessage('displayName cannot be less than 3 character')
-    .escape(),
+  inputValidation,
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -115,7 +102,7 @@ export const messagePut = [
         ErrorMessage: 'validating error',
       });
     }
-    const user = await User.findOne({ id: req.body.id });
+    const user = await User.findOne({ id: req.params.id });
     // get objectId through req.body then push it
     console.log(user.incomeMessages);
     user.incomeMessages.push(req.body.messageId);

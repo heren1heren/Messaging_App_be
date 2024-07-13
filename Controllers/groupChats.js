@@ -4,6 +4,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import Message from '../DataBase/models/message.js';
 import GroupChat from '../DataBase/models/groupChat.js';
+import User from '../DataBase/models/users.js';
+import inputValidation from '../utils/inputValidation.js';
 
 export const get = asyncHandler(async (req, res) => {
   const groupChats = await GroupChat.find({}, { _id: 0, __v: 0 }).sort({
@@ -13,21 +15,16 @@ export const get = asyncHandler(async (req, res) => {
   res.json({ message: 'successful fetch', data: groupChats });
 });
 export const detailGet = asyncHandler(async (req, res) => {
-  const groupChat = await GroupChat.find({ id: req.body.id }, { _id: 0, _v: 0 })
-    .populate('messages')
-    .exec();
+  // todo: how to populate an array of objectId
+  const groupChat = await GroupChat.findOne(
+    { id: req.params.id },
+    { _v: 0 }
+  ).exec();
   res.json({ text: 'successful fetch', data: groupChat });
 });
-// export const allGet = asyncHandler(async (req, res) => {
-//   const all = await GroupChat.find({ name: 'All' }).exec();
 
-//   res.json({ text: 'successful fetch', data: all });
-// });
 export const post = [
-  body('name')
-    .isLength({ min: 3 })
-    .withMessage('name needs to have more than 3 letters')
-    .escape(),
+  inputValidation,
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -41,9 +38,18 @@ export const post = [
       return res.json({ ErrorMessage: 'groupChat name is already existed' });
     }
     // success
-    const group = await GroupChat({ name: req.body.name, id: 'aoeuoea' });
+    const admin = await User.findOne({ id: req.body.adminId });
+    const group = await GroupChat({
+      name: req.body.name,
+      id: req.params.id,
+      admin: admin._id,
+      date: new Date(),
+    });
+    console.log(req.body);
 
-    group.members = req.body.membersId;
+    group.members = req.body.memberIds;
+
+    await group.save();
     // todo create a seperate route for all
     // for creating All:
     // const users = await User.find().exec();
@@ -55,12 +61,11 @@ export const post = [
     res.json({ message: 'successfully created an group' });
   }),
 ];
+// need to have seperate updates routes for each input changes
 
 export const put = [
-  body('name')
-    .isLength({ min: 3 })
-    .withMessage('name cannot be less than 3 character')
-    .escape(),
+  // need to build a validating function for update
+  inputValidation,
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -70,24 +75,26 @@ export const put = [
       });
     }
 
-    const group = GroupChat.find({ name: req.body.name });
+    const group = await GroupChat.findOne({ name: req.body.name });
     if (group) {
       return res.json({
         ErrorMessage: ' already existed name',
       });
     }
 
-    const existedGroup = GroupChat.find({ id: req.body.id });
+    const existedGroup = await GroupChat.findOne({ id: req.params.id });
+
     if (req.body.name) existedGroup.name = req.body.name;
     if (req.body.admin) existedGroup.admin = req.body.adminId;
     if (req.body.membersId) existedGroup.members = req.body.membersId;
+    await existedGroup.save();
     res.json({
       message: ' updated group Chat',
     });
   }),
 ];
 export const messagePut = [
-  body('message').escape(),
+  inputValidation,
   // call this route  when user upload a text inside a group chat
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
@@ -97,7 +104,7 @@ export const messagePut = [
         ErrorMessage: 'validating error',
       });
     }
-    const group = await GroupChat.find({ id: req.body.id });
+    const group = await GroupChat.find({ id: req.params.id });
 
     group.messages.push(req.body.messageId);
     await group.save();
@@ -109,15 +116,8 @@ export const messagePut = [
 ];
 
 export const del = asyncHandler(async (req, res) => {
-  await GroupChat.deleteOne({ id: req.body.id });
+  await GroupChat.deleteOne({ id: req.params.id });
   res.json({
-    message: `successful delete the groupChat  with id: ${req.body.id}`,
-  });
-});
-// for testing purpose
-export const delAll = asyncHandler(async (req, res) => {
-  await GroupChat.deleteMany();
-  res.json({
-    message: 'successful delete group chats',
+    message: `successful delete the groupChat  with id: ${req.params.id}`,
   });
 });

@@ -1,13 +1,12 @@
 **Todo**:
-writing test
+change post route name from /name/ -> /name/:id
+reason: passing or retrieving id from front end to back end will be easier
 //
 
 then -> intergrate authentication with jwt token
 
 //
 then -> writing tests with authentication
-
-**Routes**:
 
 **Notes**:
 
@@ -33,4 +32,4 @@ how to let user send message as an image?
 -> storing images' link inside message instance
 **Problems**:
 
-data doesn't drop after test post
+how to pass an array through req.body

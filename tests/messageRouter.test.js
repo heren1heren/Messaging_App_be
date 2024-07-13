@@ -65,7 +65,7 @@ test(' messages get works', (done) => {
 });
 test('message post users works', (done) => {
   request(app)
-    .post('/messages/users')
+    .post('/messages/1/users')
     .type('form')
 
     .send({

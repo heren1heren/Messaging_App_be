@@ -7,11 +7,9 @@ const messageRouter = Router();
 
 messageRouter.get('/', controller.get);
 
-messageRouter.post('/users', controller.postUserMessage);
-// messageRouter.post('/groupChats', controller.postGroupChatMessage);
-// messageRouter.post('/all', controller.postAllMessage);
-
-// messages.put('/', controller.put);
+messageRouter.post('/:id/users/', controller.postUserMessage);
+messageRouter.post('/:id/groupChats/', controller.postGroupChatMessage);
+messageRouter.post('/:id/all/', controller.postAllMessage);
 
 messageRouter.delete('/:id', controller.del);
 
