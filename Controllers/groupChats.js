@@ -95,7 +95,7 @@ export const put = [
 ];
 export const messagePut = [
   inputValidation,
-  // call this route  when user upload a text inside a group chat
+
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -104,13 +104,23 @@ export const messagePut = [
         ErrorMessage: 'validating error',
       });
     }
-    const group = await GroupChat.find({ id: req.params.id });
+    const group = await GroupChat.findOne({ id: req.params.id });
+    // pass messageId
 
-    group.messages.push(req.body.messageId);
+    const sender = await User.findOne({ id: req.body.senderId });
+
+    const message = await Message.create({
+      id: req.body.messageId,
+      text: req.body.messageText,
+      date: new Date(),
+      sender: sender._id,
+      receiver: group._id,
+    });
+    group.incomeMessages.push(message._id);
     await group.save();
 
     res.json({
-      message: ' storing message sent by user ',
+      message: ' success ',
     });
   }),
 ];

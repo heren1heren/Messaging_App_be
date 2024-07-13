@@ -23,14 +23,14 @@ beforeEach(async () => {
     date: new Date(),
     incomeMessages: [],
   });
-  const user1 = await User.create({
+  await User.create({
     username: 'klein',
     password: 'aoetuuueee',
     id: '2',
     date: new Date(),
     incomeMessages: [],
   });
-  const user2 = await User.create({
+  await User.create({
     username: 'klein',
     password: 'aoetuuueee',
     id: '3',
@@ -113,9 +113,7 @@ test('group chat update  name works', (done) => {
     .put('/groupChats/1')
     .type('form')
     .send({ name: 'changedName' })
-    .expect((res) => {
-      // console.log(res.text);
-    })
+
     .then(() => {
       request(app)
         .get('/groupChats/1')
@@ -131,8 +129,17 @@ test('group chat message update works', (done) => {
   request(app)
     .put('/groupchats/1/messages')
     .type('form')
-    .send({ messageId: '1' })
-    .expect(200, done);
+    .send({ messageId: '1', senderId: '1', messageText: 'sent Message' })
+
+    .then(() => {
+      request(app)
+        .get('/groupChats/1')
+        .expect((res) => {
+          expect(res.body.data).toHaveProperty('incomeMessages');
+          expect(res.body.data.incomeMessages).toHaveLength(2);
+        })
+        .end(done);
+    });
 });
 
 test('groupChat delete works', (done) => {
